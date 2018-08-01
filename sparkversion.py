@@ -47,8 +47,9 @@ def processVector(data):
             if min_dist == -1 or min_dist > dist:
                 min_dist = dist
                 sub_vect_idx = i
-        result = 'Data Vector: D[' + data[0] + ']  Min Distance: ' + format(min_dist, '.3f') + ' Start index: ' + str(sub_vect_idx)
-    return str(result)
+		result = [data[0],min_dist,sub_vect_idx]
+        #result = 'Data Vector: D[' + data[0] + ']  Min Distance: ' + format(min_dist, '.3f') + ' Start index: ' + str(sub_vect_idx)
+    return result
 
 # read the data vector files from the directory into rdd for processing
 filerdd = sc.wholeTextFiles("/home/ubuntu/DataVectors/*.txt")
@@ -58,3 +59,4 @@ query_vector = sc.broadcast(Q)
 vector_result_rdd = filerdd.map(loadVectors).map(processVector)
 # collect the result for each data vector
 vector_result_rdd.collect()
+vector_result_rdd.sortBy(lambda data: data[1], ascending=True).take(5)
